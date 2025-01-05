@@ -1,0 +1,106 @@
+install.packages("dplyr")
+library(dplyr)
+install.packages("ggplot")
+library(ggplot2)
+
+anes <- read.csv('anes_pilot_2022_csv_20221214.csv') #read file
+
+################################################################################
+###Data Cleansing for Voters and Party Affiliations#############################
+################################################################################
+
+#Filter for self-identified democrat and republican (pid1d, pid1r) voters who are registered to vote (reg) only
+#If self-identified as an independent or other, include voters if they lean democrat or republican (pidlean)
+anes_final <- filter(anes, reg != 3 & ((pid1d == 1 | pid1d == 2 
+                                        | pid1r == 1 | pid1r == 2
+                                        | pidlean == 1 | pidlean == 2)))
+
+#Assign party labels for self-identified and leaning individuals
+anes_final$party_bucket <- case_when(
+  anes_final$pid1d==1 | anes_final$pid1r==1 | anes_final$pidlean==2 ~ "Dem",
+  anes_final$pid1d==2 | anes_final$pid1r==2 | anes_final$pidlean==1 ~ "Rep")
+
+################################################################################
+###Data Manipulation for Difficulty Voting######################################
+################################################################################
+
+#Difficulty will be a binary measure (difficult or not) based on response to vharder
+#vharder_12 refers to "None" difficulties experienced
+#if vharder_12 response in dataset is 1, then the option is selected and no difficulty is experienced
+#if vharder_12 is not selected, then one of the other vharder is selected, meaning there was difficulty. 
+#We assigned 1 to indicate that voting was diffcult
+
+countofnodiff <- sum(anes_final$vharder_12 == 1) #number of voters who experienced difficulty
+countofdiff <- sum(anes_final$vharder_12 == 2) #number of voters who did not experience difficulty
+anes_final$difficult <- if_else(anes_final$vharder_12 == 1, 0, 1) #Assign 0 to those who didn't experience difficulty, 1 for those with difficulties
+anes_final$diffnamed <- factor(anes_final$difficult, 
+                                    levels = c(0, 1), 
+                                    labels = c("No Difficulty Voting", "Difficulty Voting"))
+
+################################################################################
+###Counting Table for Data Cleansing############################################
+################################################################################
+#| echo: false
+count_nonreg <- sum(anes$reg == 3)
+
+initial_count <- nrow(anes)
+first_cut <- initial_count - count_nonreg
+second_cut<- nrow(anes_final)
+
+#Calculate differences
+difference_first_cut <- initial_count - first_cut
+difference_second_cut <- first_cut - second_cut
+
+count_table <- data.frame(
+  Cause = c("Start", "Voters Only", "Democrats & Republicans"),
+  Samples_Available = c(initial_count, first_cut, second_cut),
+  Removed_Samples = c(NA, difference_first_cut, difference_second_cut)
+)
+
+
+library(knitr)
+
+kable(count_table, caption = "Counting Table for Democrats & Republican Voters")
+
+#saves Democrats and Republicans difficulty binaries to own variables
+anes_dem <- anes_final %>% filter(party_bucket=="Dem") %>% select(difficult)
+anes_rep <- anes_final %>% filter(party_bucket=="Rep") %>% select(difficult)
+
+################################################################################
+###Data Visualization for Voter Difficulty Across Party Affiliations############
+################################################################################
+
+percent_hardvote <- anes_final %>%
+  group_by(party_bucket, diffnamed) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  group_by(party_bucket) %>%
+  mutate(Percentage = Count / sum(Count) * 100)
+
+ggplot(percent_hardvote, aes(fill = party_bucket, x = diffnamed, y = Percentage)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_fill_manual(values = c("Dem" = "lightblue", 
+                               "Rep" = "tomato")) +
+  geom_text(aes(label = paste0(round(Percentage, 1), "%")),
+            position = position_dodge(0.9),
+            vjust = -0.5) +
+  labs(title = "Voting Difficulty by Political Affiliation", 
+       x = "Difficulty Voting Scale", 
+       y = "Percent of Total Democrats or Republicans Voters",
+       fill = "Party Affiliation") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+################################################################################
+###Chi Square Test##############################################################
+################################################################################
+
+voting_data <- xtabs(Count ~ party_bucket + diffnamed, data = percent_hardvote)
+# Print the updated data frame
+#print(voting_data)
+
+library(knitr)
+
+kable(voting_data, caption = "Difficulty Voting Between Democrats and Republicans")
+
+
+chi_test <- chisq.test(voting_data)
+
