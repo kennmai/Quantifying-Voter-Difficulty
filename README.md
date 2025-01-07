@@ -15,7 +15,6 @@ accessible and fair. A better understanding of these challenges can help develop
 
 1: “Executive Order on Promoting Access to Voting.” (2021). https://www.whitehouse.gov/briefing-room/presidential-actions/2021/03/07/executive-order-on-promoting-access-to-voting/
 2: Pew Research Center. “3. The voting experience in 2020.” (2020). https://www.pewresearch.org/politics/2020/11/20/the-voting-experience-in-2020/
-3: 69% is the percentage of registered voters based on the ‘reg’ variable that did not mark “vharder_12” or “none of these”, indicating they experienced some form of diﬀiculty (marked
-at least one diﬀiculty out of variables “vharder_1-11”)
+3: 69% is the percentage of registered voters based on the ‘reg’ variable that did not mark “vharder_12” or “none of these”, indicating they experienced some form of diﬀiculty (marked at least one diﬀiculty out of variables “vharder_1-11”)
 4: American Progress. “Enhancing Accessibility in U.S. Elections.” (2021). https://www.americanprogress.org/article/enhancing-accessibility-u-s-elections/
 5: Brennan Center. “The Impact of Voter Suppression on Communities of Color.” (2022). https://www.brennance
