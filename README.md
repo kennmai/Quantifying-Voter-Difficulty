@@ -7,8 +7,7 @@
 The right to vote is the foundation of American democracy. However many Americans face significant obstacles in exercising this fundamental right. These obstacles range from lack of
 election information to barriers at polling places.<sup>1</sup> The coronavirus pandemic further exacerbated these barriers.<sup>2</sup> According to the 2022 American National Election Studies (ANES)
 Pilot Study, 69% of registered voters reported encountering some form of diﬀiculty while voting.(3) Furthermore, these challenges disproportionately affect certain groups, leading to voter
-suppression and reduced turnout.<sup>4 5</sup> Research shows that Democratic and Republican voters often face different voting diﬀiculties. Understanding these differences is critical because voting obstacles can influence voter participation and potentially alter election results. This analysis aims to address the following
-research question:
+suppression and reduced turnout.<sup>4 5</sup> Research shows that Democratic and Republican voters often face different voting diﬀiculties. Understanding these differences is critical because voting obstacles can influence voter participation and potentially alter election results. 
 
 **Methodology and Approach:**
 Our primary analysis uses a Chi-Square test to investigate whether there is a statistically significant association between party affiliation (Democrat vs. Republican) and the experience of voting difficulty. The study’s key steps include:
